@@ -20,6 +20,8 @@
 
 	module("jQuery#idle-timer");
 
+	var events = ["mousemove", "keydown", "DOMMouseScroll", "mousewheel", "mousedown", "touchstart", "touchmove"];
+
 	asyncTest( "default behavior", function() {
 		expect( 1 );
 
@@ -31,13 +33,13 @@
 		$.idleTimer( 100 );
 	});
 
-	asyncTest( "Should clear timeout on keydown event", function() {
+	var testClearTimeout = function( event ) {
 		expect( 3 );
 
 		// trigger event every now and then to prevent going inactive
 		var interval = setInterval( function()
 		{
-			$( document ).trigger( "keydown" );
+			$( document ).trigger( event );
 			equal( $( document ).data( "idleTimer" ), "active", "State should be active" );
 		}, 100);
 
@@ -49,6 +51,14 @@
 		}, 350);
 
 		$.idleTimer( 200 );
+	};
+
+	$.each(events, function( i, event )
+	{
+		asyncTest( "Should clear timeout on " + event, function()
+		{
+			testClearTimeout(event);
+		});
 	});
 
 }(jQuery));
