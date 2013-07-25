@@ -26,6 +26,7 @@
 		$( document ).on( "idle.idleTimer", function(){
 			ok( true, "idleTime fires at document by default" );
 			start();
+			$.idleTimer( "destroy" );
 		});
 		$.idleTimer( 100 );
 	});
