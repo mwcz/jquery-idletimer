@@ -31,4 +31,24 @@
 		$.idleTimer( 100 );
 	});
 
+	asyncTest( "Should clear timeout on keydown event", function() {
+		expect( 3 );
+
+		// trigger event every now and then to prevent going inactive
+		var interval = setInterval( function()
+		{
+			$( document ).trigger( "keydown" );
+			equal( $( document ).data( "idleTimer" ), "active", "State should be active" );
+		}, 100);
+
+		setTimeout( function()
+		{
+			clearTimeout( interval );
+			start();
+			$.idleTimer( "destroy" );
+		}, 350);
+
+		$.idleTimer( 200 );
+	});
+
 }(jQuery));
