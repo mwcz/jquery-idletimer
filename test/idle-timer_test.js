@@ -24,7 +24,7 @@
 		expect( 1 );
 
 		$( document ).on( "idle.idleTimer", function(){
-			ok( true, "idleTime fires at document by default" );
+			ok( true, "idleTimer fires at document by default" );
 			start();
 			$.idleTimer( "destroy" );
 		});
