@@ -20,8 +20,6 @@
 
 	module("jQuery#idle-timer");
 
-	var events = ["mousemove", "keydown", "DOMMouseScroll", "mousewheel", "mousedown", "touchstart", "touchmove"];
-
 	asyncTest( "default behavior", function() {
 		expect( 1 );
 
@@ -33,31 +31,23 @@
 		$.idleTimer( 100 );
 	});
 
-	var testClearTimeout = function( event ) {
-		expect( 3 );
+	$.each( ["mousemove", "keydown", "DOMMouseScroll", "mousewheel", "mousedown", "touchstart", "touchmove"], function( i, event ) {
+		asyncTest( "Should clear timeout on " + event, function() {
+			expect( 3 );
 
-		// trigger event every now and then to prevent going inactive
-		var interval = setInterval( function()
-		{
-			$( document ).trigger( event );
-			equal( $( document ).data( "idleTimer" ), "active", "State should be active" );
-		}, 100);
+			// trigger event every now and then to prevent going inactive
+			var interval = setInterval( function() {
+				$( document ).trigger( event );
+				equal( $( document ).data( "idleTimer" ), "active", "State should be active" );
+			}, 100);
 
-		setTimeout( function()
-		{
-			clearTimeout( interval );
-			start();
-			$.idleTimer( "destroy" );
-		}, 350);
+			setTimeout( function() {
+				clearTimeout( interval );
+				start();
+				$.idleTimer( "destroy" );
+			}, 350);
 
-		$.idleTimer( 200 );
-	};
-
-	$.each(events, function( i, event )
-	{
-		asyncTest( "Should clear timeout on " + event, function()
-		{
-			testClearTimeout(event);
+			$.idleTimer( 200 );
 		});
 	});
 
