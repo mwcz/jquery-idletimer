@@ -35,14 +35,17 @@
 		asyncTest( "Should clear timeout on " + event, function() {
 			expect( 3 );
 
-			// trigger event every now and then to prevent going inactive
-			var interval = setInterval( function() {
+			var triggerEvent = function() {
 				$( document ).trigger( event );
 				equal( $( document ).data( "idleTimer" ), "active", "State should be active" );
-			}, 100);
+			};
+
+			// trigger event every now and then to prevent going inactive
+			setTimeout( triggerEvent, 100 );
+			setTimeout( triggerEvent, 200 );
+			setTimeout( triggerEvent, 300 );
 
 			setTimeout( function() {
-				clearTimeout( interval );
 				start();
 				$.idleTimer( "destroy" );
 			}, 350);
