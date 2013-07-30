@@ -36,8 +36,8 @@
 			expect( 3 );
 
 			var triggerEvent = function() {
-				$( document ).trigger( event );
-				equal( $( document ).data( "idleTimer" ), "active", "State should be active" );
+				$( "#qunit-fixture" ).trigger( event );
+				equal( $( "#qunit-fixture" ).data( "idleTimer" ), "active", "State should be active" );
 			};
 
 			// trigger event every now and then to prevent going inactive
@@ -50,7 +50,7 @@
 				$.idleTimer( "destroy" );
 			}, 350);
 
-			$.idleTimer( 200 );
+			$( "#qunit-fixture" ).idleTimer( 200 );
 		});
 	});
 
