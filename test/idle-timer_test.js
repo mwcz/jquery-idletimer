@@ -25,8 +25,8 @@
 
 		$( document ).on( "idle.idleTimer", function(){
 			ok( true, "idleTimer fires at document by default" );
-			start();
 			$.idleTimer( "destroy" );
+			start();
 		});
 		$.idleTimer( 100 );
 	});
@@ -46,8 +46,8 @@
 			setTimeout( triggerEvent, 300 );
 
 			setTimeout( function() {
-				start();
 				$.idleTimer( "destroy" );
+				start();
 			}, 350);
 
 			$( "#qunit-fixture" ).idleTimer( 200 );
