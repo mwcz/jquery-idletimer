@@ -1,4 +1,4 @@
-/*! Idle Timer - v0.9.2 - 2013-01-06
+/*! Idle Timer - v0.9.2 - 2013-08-04
 * https://github.com/mikesherov/jquery-idletimer
 * Copyright (c) 2013 Paul Irish; Licensed MIT */
 ( function( $ ) {
@@ -135,7 +135,7 @@ $.fn.idleTimer = function( firstParam, opts ) {
 	}
 
 	if ( this[0] ){
-		$.idleTimer( firstParam, this[0], opts );
+		return $.idleTimer( firstParam, this[0], opts );
 	}
 
 	return this;
