@@ -1,79 +1,346 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
-
-  <head>
+<head>
     <meta charset='utf-8' />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Jquery-idletimer : provides you a way to monitor user activity with a page." />
-
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-
     <title>Jquery-idletimer</title>
-  </head>
+    <script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../src/idle-timer.js"></script>
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <style>
+        body {
+            margin-top: 40px;
+            margin-bottom: 40px;
+        }
 
-  <body>
-
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/thorst/jquery-idletimer">View on GitHub</a>
-
-          <h1 id="project_title">Jquery-idletimer</h1>
-          <h2 id="project_tagline">provides you a way to monitor user activity with a page.</h2>
-
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/thorst/jquery-idletimer/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/thorst/jquery-idletimer/tarball/master">Download this project as a tar.gz file</a>
-            </section>
-        </header>
+        .btn {
+            padding: 5px 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="index.html">Jquery-idletimer</a>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="autologout.html">Auto Logout</a></li>
+                    <li><a href="defaultbinding.html">Default Binding</a></li>
+                    <li><a href="https://github.com/thorst/jquery-idletimer">Documentation</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="https://github.com/thorst/jquery-idletimer/zipball/master">Zip</a></li>
+                    <li><a href="https://github.com/thorst/jquery-idletimer/tarball/master">Tar</a></li>
+                    <li><a href="https://github.com/thorst/jquery-idletimer">Github</a></li>
+                </ul>
+            </div> <!--/.nav-collapse  -->
+        </div>
     </div>
-
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <h3>
-<a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
-
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
-
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
-</code></pre>
-
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
-
-<h3>
-<a name="designer-templates" class="anchor" href="#designer-templates"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
-
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
-
-<h3>
-<a name="rather-drive-stick" class="anchor" href="#rather-drive-stick"><span class="octicon octicon-link"></span></a>Rather Drive Stick?</h3>
-
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
-
-<h3>
-<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
-
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
-
-<h3>
-<a name="support-or-contact" class="anchor" href="#support-or-contact"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
-
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
-      </section>
+    <div class="container">
+        <h2>Concept</h2>
+        <p>The idle timer is built on <a href="http://jquery.com/">jQuery</a> and provides two events: <code>idle</code> and <code>active</code>, which fire when the user's idle state has changed.</p>
+        <p>When you move your mouse over the page or start typing, you're considered "active".</p>
+        <p>On this page we have two idle timers. One for the entire document. Another for the text area on the right.</p>
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Document <small><span id="docTimeout"></span> second timeout</small></h3>
+                <div class="btn-group">
+                    <a href="#" id="btPause" class="btn btn-default btn-sm">Pause</a>
+                    <a href="#" id="btResume" class="btn btn-default btn-sm">Resume</a>
+                    <a href="#" id="btElapsed" class="btn btn-default btn-sm">Elapsed</a>
+                </div>
+                <textarea rows="10" cols="30" id="docStatus" class="form-control"></textarea><br />
+            </div>
+            <div class="col-md-6">
+                <h3>Element <small><span id="elTimeout"></span> second timeout</small></h3>
+                <div class="btn-group">
+                    <a href="#" id="btReset" class="btn btn-default btn-sm">Reset</a>
+                    <a href="#" id="btLastActive" class="btn btn-default btn-sm">Last Active</a>
+                    
+                    <a href="#" id="btRemaining" class="btn btn-default btn-sm">Remaining</a>
+                    <a href="#" id="btState" class="btn btn-default btn-sm">State</a>
+                </div>
+                <textarea rows="10" cols="30" id="elStatus" class="form-control"></textarea><br />
+            </div>
+        </div>
+        <h3>Dialogs</h3>
+        <!-- Button trigger modal -->
+        <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+            Launch modal
+        </button>
+        <button id="alert" class="btn btn-primary btn-lg">
+            Launch alert
+        </button>
+        <!-- Modal -->
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+                    </div>
+                    <div class="modal-body">
+                        ...
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+    <script>
+        /*
+        scrollToBottom plugin, chainable
+        */
+        $.fn.scrollToBottom = function () {
+            this.scrollTop(this[0].scrollHeight);
+            return this;
+        };
+        (function ($) {
+            //Display alert
+            $("#alert").click(function () { alert("Hello!"); return false; });
+        })(jQuery);
+    </script>
+    <script type="text/javascript">
+        /*
+        Code for document idle timer
+        */
+        (function ($) {
+            //Define default
+            var
+                docTimeout = 5000,
+                docOptions = {
 
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Jquery-idletimer maintained by <a href="https://github.com/thorst">thorst</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
-      </footer>
-    </div>
+                }
+            ;
 
-    
+            //Handle idle event
+            $(document).on("idle.idleTimer", function () {
+                $("#docStatus")
+                    .val(function (i, v) {
+                        return v + "Idle @ " + new Date() + " \n";
+                    })
+                    .removeClass("alert-success")
+                    .addClass("alert-warning")
+                    .scrollToBottom();
+            });
 
-  </body>
+            //Handle active event
+            $(document).on("active.idleTimer", function () {
+                $('#docStatus')
+                    .val(function (i, v) {
+                        return v + "Active @ " + new Date() + " \n";
+                    })
+                    .addClass("alert-success")
+                    .removeClass("alert-warning")
+                    .scrollToBottom();
+            });
+
+
+            $("#btPause").click(function () {
+                $(document).idleTimer("pause");
+                $('#docStatus')
+                    .val(function (i, v) {
+                        return v + "Paused @ " + new Date() + " \n";
+                    })
+                    .scrollToBottom();
+                $(this).blur();
+                return false;
+            });
+            $("#btResume").click(function () {
+                $(document).idleTimer("resume");
+                $('#docStatus')
+                    .val(function (i, v) {
+                        return v + "Resumed @ " + new Date() + " \n";
+                    })
+                    .scrollToBottom();
+                $(this).blur();
+                return false;
+            });
+            $("#btElapsed").click(function () {
+                $('#docStatus')
+                    .val(function (i, v) {
+                        return v + "Elapsed (since becoming active): " + $(document).idleTimer("getElapsedTime") + " \n";
+                    })
+                    .scrollToBottom();
+                $(this).blur();
+                return false;
+            });
+
+            //Clear old statuses
+            $('#docStatus').val('');
+
+            //Start timeout, passing no options
+            //Same as $(document).idleTimer(docTimeout);
+            $(document).idleTimer(docTimeout, docOptions);
+
+            //For demo purposes, get obj data and style
+            //output accordingly
+            var obj = $(document).data("idleTimer");
+            if (obj !== "active") {
+                $("#docStatus")
+                  .val(function (i, v) {
+                      return v + "Idle @ " + new Date() + " \n";
+                  })
+                  .removeClass("alert-success")
+                  .addClass("alert-warning")
+                  .scrollToBottom();
+            } else {
+                $('#docStatus')
+                    .val(function (i, v) {
+                        return v + "Active @ " + new Date() + " \n";
+                    })
+                    .addClass("alert-success")
+                    .removeClass("alert-warning")
+                    .scrollToBottom();
+            }
+
+
+            // Display the actual timeout on the page
+            $('#docTimeout').text(docTimeout / 1000);
+
+
+        })(jQuery);
+
+    </script>
+
+    <script type="text/javascript">
+        /*
+        Code for element idle timer
+        */
+        (function ($) {
+            //Define textarea settings
+            var
+                taTimeout = 3000,
+                taOptions = {
+                }
+            ;
+
+            /*
+            Handle raised idle/active events
+            */
+            $('#elStatus').on("idle.idleTimer", function (event,elem, obj) {
+                //If you dont stop propagation it will bubble up to document event handler
+                event.stopPropagation();
+             
+                $('#elStatus')
+                    .val(function (i, v) {
+                        return v + "Idle @ " + new Date() + " \n";
+                    })
+                    .removeClass("alert-success")
+                    .addClass("alert-warning")
+                    .scrollToBottom();
+
+            });
+
+            $('#elStatus').on("active.idleTimer", function (event) {
+                //If you dont stop propagation it will bubble up to document event handler
+                event.stopPropagation();
+
+                $('#elStatus')
+                    .val(function (i, v) {
+                        return v + "Active @ " + new Date() + " \n";
+                    })
+                    .addClass("alert-success")
+                    .removeClass("alert-warning")
+                    .scrollToBottom();
+            });
+
+            /*
+            Handle button events
+            */
+            $("#btReset").click(function () {
+                var obj = $("#elStatus").data("idleTimerObj");
+
+                $('#elStatus')
+                    .idleTimer("reset")
+                    .val(function (i, v) {
+                        return v + "Reset @ " + new Date() + " \n";
+                    })
+                    .scrollToBottom();
+
+                //Apply classes for default state
+                if (obj.idleBackup)
+                    $('#elStatus')
+                        .removeClass("alert-success")
+                        .addClass("alert-warning");
+                else
+                    $('#elStatus')
+                        .addClass("alert-success")
+                        .removeClass("alert-warning");
+                return false;
+            });
+            
+            
+            $("#btRemaining").click(function () {
+                $('#elStatus')
+                    .val(function (i, v) {
+                        return v + "Remaining: " + $("#elStatus").idleTimer("getRemainingTime") + " \n";
+                    })
+                    .scrollToBottom();
+           
+                
+                return false;
+            });
+            $("#btLastActive").click(function () {
+                $('#elStatus')
+                    .val(function (i, v) {
+                        return v + "LastActive: " + $("#elStatus").idleTimer("getLastActiveTime") + " \n";
+                    })
+                    .scrollToBottom();
+                return false;
+            });
+            
+            $("#btState").click(function () {
+                $('#elStatus')
+                    .val(function (i, v) {
+                        return v + "State: " + $("#elStatus").data("idleTimer") + " \n";
+                    })
+                    .scrollToBottom();
+                return false;
+            });
+
+            //Clear value if there was one cached & start time
+            $('#elStatus').val('').idleTimer(taTimeout, taOptions);
+
+            //For demo purposes, get obj data and style
+            //output accordingly
+            var obj = $("#elStatus").data("idleTimer");
+            if (obj !== "active") {
+                $("#elStatus")
+                  .val(function (i, v) {
+                      return v + "Idle @ " + new Date() + " \n";
+                  })
+                  .removeClass("alert-success")
+                  .addClass("alert-warning")
+                  .scrollToBottom();
+            } else {
+                $('#elStatus')
+                    .val(function (i, v) {
+                        return v + "Active @ " + new Date() + " \n";
+                    })
+                    .addClass("alert-success")
+                    .removeClass("alert-warning")
+                    .scrollToBottom();
+            }
+
+            // Display the actual timeout on the page
+            $('#elTimeout').text(taTimeout / 1000);
+
+        })(jQuery);
+
+    </script>
+</body>
 </html>
