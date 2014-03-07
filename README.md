@@ -1,6 +1,10 @@
 jQuery Idle Timer Plugin
 ========================
 
+Coming soon
+-------
+Work is currently being done on the dev branch. I hope to have a new release here before the end of march 2014.
+
 Download
 --------
 * https://raw.github.com/mikesherov/jquery-idletimer/master/dist/idle-timer.min.js
