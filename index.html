@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset='utf-8' />
@@ -6,10 +6,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Jquery-idletimer : provides you a way to monitor user activity with a page." />
     <title>Jquery-idletimer</title>
+
+    <!-- jQuery and idleTimer -->
     <script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.min.js"></script>
     <script type="text/javascript" src="idle-timer.js"></script>
+
+    <!-- Bootstrap/respond (ie8) and moment -->
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.js"></script>
+
+    <!-- Respond.js proxy on external server -->
+    <link href="//netdna.bootstrapcdn.com/respond-proxy.html" id="respond-proxy" rel="respond-proxy" />
+    <link href="respond.proxy.gif" id="respond-redirect" rel="respond-redirect" />
+    <script src="respond.proxy.js"></script>
     <style>
         body {
             margin-top: 40px;
@@ -49,9 +60,10 @@
     </div>
     <div class="container">
         <h2>Concept</h2>
-        <p>The idle timer is built on <a href="http://jquery.com/">jQuery</a> and provides two events: <code>idle</code> and <code>active</code>, which fire when the user's idle state has changed.</p>
+        <p>The idle timer is built on <a href="http://jquery.com/">jQuery</a> and provides two events: <code>idle.idleTimer</code> and <code>active.idleTimer</code>, which fire when the user's idle state has changed.</p>
         <p>When you move your mouse over the page or start typing, you're considered "active".</p>
         <p>On this page we have two idle timers. One for the entire document. Another for the text area on the right.</p>
+        <p>I use explicit instantiation here</p>
         <div class="row">
             <div class="col-md-6">
                 <h3>Document <small><span id="docTimeout"></span> second timeout</small></h3>
@@ -59,6 +71,8 @@
                     <a href="#" id="btPause" class="btn btn-default btn-sm">Pause</a>
                     <a href="#" id="btResume" class="btn btn-default btn-sm">Resume</a>
                     <a href="#" id="btElapsed" class="btn btn-default btn-sm">Elapsed</a>
+                    <a href="#" id="btInit" class="btn btn-default btn-sm">Init</a>
+                    <a href="#" id="btDestroy" class="btn btn-default btn-sm">Destroy</a>
                 </div>
                 <textarea rows="10" cols="30" id="docStatus" class="form-control"></textarea><br />
             </div>
@@ -67,7 +81,6 @@
                 <div class="btn-group">
                     <a href="#" id="btReset" class="btn btn-default btn-sm">Reset</a>
                     <a href="#" id="btLastActive" class="btn btn-default btn-sm">Last Active</a>
-                    
                     <a href="#" id="btRemaining" class="btn btn-default btn-sm">Remaining</a>
                     <a href="#" id="btState" class="btn btn-default btn-sm">State</a>
                 </div>
@@ -108,10 +121,15 @@
             this.scrollTop(this[0].scrollHeight);
             return this;
         };
+        /*
+        click event for alert button
+        */
         (function ($) {
             //Display alert
             $("#alert").click(function () { alert("Hello!"); return false; });
         })(jQuery);
+
+
     </script>
     <script type="text/javascript">
         /*
@@ -126,34 +144,36 @@
                 }
             ;
 
-            //Handle idle event
-            $(document).on("idle.idleTimer", function () {
+            /*
+            Handle raised idle/active events
+            */
+            $(document).on("idle.idleTimer", function (event, elem, obj) {
                 $("#docStatus")
                     .val(function (i, v) {
-                        return v + "Idle @ " + new Date() + " \n";
+                        return v + "Idle @ " + moment().format() + " \n";
                     })
                     .removeClass("alert-success")
                     .addClass("alert-warning")
                     .scrollToBottom();
             });
-
-            //Handle active event
-            $(document).on("active.idleTimer", function () {
+            $(document).on("active.idleTimer", function (event, elem, obj, e) {
                 $('#docStatus')
                     .val(function (i, v) {
-                        return v + "Active @ " + new Date() + " \n";
+                        return v + "Active [" + e.type + "] [" + e.target.nodeName + "] @ " + moment().format() + " \n";
                     })
                     .addClass("alert-success")
                     .removeClass("alert-warning")
                     .scrollToBottom();
             });
 
-
+            /*
+            Handle button events
+            */
             $("#btPause").click(function () {
                 $(document).idleTimer("pause");
                 $('#docStatus')
                     .val(function (i, v) {
-                        return v + "Paused @ " + new Date() + " \n";
+                        return v + "Paused @ " + moment().format() + " \n";
                     })
                     .scrollToBottom();
                 $(this).blur();
@@ -163,7 +183,7 @@
                 $(document).idleTimer("resume");
                 $('#docStatus')
                     .val(function (i, v) {
-                        return v + "Resumed @ " + new Date() + " \n";
+                        return v + "Resumed @ " + moment().format() + " \n";
                     })
                     .scrollToBottom();
                 $(this).blur();
@@ -178,21 +198,53 @@
                 $(this).blur();
                 return false;
             });
+            $("#btDestroy").click(function () {
+                $(document).idleTimer("destroy");
+                $('#docStatus')
+                    .val(function (i, v) {
+                        return v + "Destroyed: @ " + moment().format() + " \n";
+                    })
+                    .removeClass("alert-success")
+                    .removeClass("alert-warning")
+                    .scrollToBottom();
+                $(this).blur();
+                return false;
+            });
+            $("#btInit").click(function () {
+                // for demo purposes show init with just object
+                $(document).idleTimer($.extend(docOptions, { timeout: docTimeout }));
+                $('#docStatus')
+                    .val(function (i, v) {
+                        return v + "Init: @ " + moment().format() + " \n";
+                    })
+                    .scrollToBottom();
+
+                //Apply classes for default state
+                if ($(document).idleTimer("isIdle")) {
+                    $('#docStatus')
+                        .removeClass("alert-success")
+                        .addClass("alert-warning");
+                } else {
+                    $('#docStatus')
+                        .addClass("alert-success")
+                        .removeClass("alert-warning");
+                }
+                $(this).blur();
+                return false;
+            });
 
             //Clear old statuses
             $('#docStatus').val('');
 
             //Start timeout, passing no options
-            //Same as $(document).idleTimer(docTimeout);
+            //Same as $.idleTimer(docTimeout, docOptions);
             $(document).idleTimer(docTimeout, docOptions);
 
-            //For demo purposes, get obj data and style
-            //output accordingly
-            var obj = $(document).data("idleTimer");
-            if (obj !== "active") {
+            //For demo purposes, style based on initial state
+            if ($(document).idleTimer("isIdle")) {
                 $("#docStatus")
                   .val(function (i, v) {
-                      return v + "Idle @ " + new Date() + " \n";
+                      return v + "Initial Idle State @ " + moment().format() + " \n";
                   })
                   .removeClass("alert-success")
                   .addClass("alert-warning")
@@ -200,7 +252,7 @@
             } else {
                 $('#docStatus')
                     .val(function (i, v) {
-                        return v + "Active @ " + new Date() + " \n";
+                        return v + "Initial Active State @ " + moment().format() + " \n";
                     })
                     .addClass("alert-success")
                     .removeClass("alert-warning")
@@ -208,7 +260,7 @@
             }
 
 
-            // Display the actual timeout on the page
+            //For demo purposes, display the actual timeout on the page
             $('#docTimeout').text(docTimeout / 1000);
 
 
@@ -231,27 +283,26 @@
             /*
             Handle raised idle/active events
             */
-            $('#elStatus').on("idle.idleTimer", function (event,elem, obj) {
+            $('#elStatus').on("idle.idleTimer", function (event, elem, obj) {
                 //If you dont stop propagation it will bubble up to document event handler
                 event.stopPropagation();
-             
+
                 $('#elStatus')
                     .val(function (i, v) {
-                        return v + "Idle @ " + new Date() + " \n";
+                        return v + "Idle @ " + moment().format() + " \n";
                     })
                     .removeClass("alert-success")
                     .addClass("alert-warning")
                     .scrollToBottom();
 
             });
-
             $('#elStatus').on("active.idleTimer", function (event) {
                 //If you dont stop propagation it will bubble up to document event handler
                 event.stopPropagation();
 
                 $('#elStatus')
                     .val(function (i, v) {
-                        return v + "Active @ " + new Date() + " \n";
+                        return v + "Active @ " + moment().format() + " \n";
                     })
                     .addClass("alert-success")
                     .removeClass("alert-warning")
@@ -262,36 +313,33 @@
             Handle button events
             */
             $("#btReset").click(function () {
-                var obj = $("#elStatus").data("idleTimerObj");
-
                 $('#elStatus')
                     .idleTimer("reset")
                     .val(function (i, v) {
-                        return v + "Reset @ " + new Date() + " \n";
+                        return v + "Reset @ " + moment().format() + " \n";
                     })
                     .scrollToBottom();
 
                 //Apply classes for default state
-                if (obj.idleBackup)
+                if ($("#elStatus").idleTimer("isIdle")) {
                     $('#elStatus')
                         .removeClass("alert-success")
                         .addClass("alert-warning");
-                else
+                } else {
                     $('#elStatus')
                         .addClass("alert-success")
                         .removeClass("alert-warning");
+                }
+                $(this).blur();
                 return false;
-            });
-            
-            
+            }); 
             $("#btRemaining").click(function () {
                 $('#elStatus')
                     .val(function (i, v) {
                         return v + "Remaining: " + $("#elStatus").idleTimer("getRemainingTime") + " \n";
                     })
                     .scrollToBottom();
-           
-                
+                $(this).blur();
                 return false;
             });
             $("#btLastActive").click(function () {
@@ -300,28 +348,27 @@
                         return v + "LastActive: " + $("#elStatus").idleTimer("getLastActiveTime") + " \n";
                     })
                     .scrollToBottom();
+                $(this).blur();
                 return false;
-            });
-            
+            }); 
             $("#btState").click(function () {
                 $('#elStatus')
                     .val(function (i, v) {
-                        return v + "State: " + $("#elStatus").data("idleTimer") + " \n";
+                        return v + "State: " + ($("#elStatus").idleTimer("isIdle")? "idle":"active") + " \n";
                     })
                     .scrollToBottom();
+                $(this).blur();
                 return false;
             });
 
             //Clear value if there was one cached & start time
             $('#elStatus').val('').idleTimer(taTimeout, taOptions);
 
-            //For demo purposes, get obj data and style
-            //output accordingly
-            var obj = $("#elStatus").data("idleTimer");
-            if (obj !== "active") {
+            //For demo purposes, show initial state
+            if ($("#elStatus").idleTimer("isIdle")) {
                 $("#elStatus")
                   .val(function (i, v) {
-                      return v + "Idle @ " + new Date() + " \n";
+                      return v + "Idle @ " + moment().format() + " \n";
                   })
                   .removeClass("alert-success")
                   .addClass("alert-warning")
@@ -329,7 +376,7 @@
             } else {
                 $('#elStatus')
                     .val(function (i, v) {
-                        return v + "Active @ " + new Date() + " \n";
+                        return v + "Active @ " + moment().format() + " \n";
                     })
                     .addClass("alert-success")
                     .removeClass("alert-warning")
