@@ -1,11 +1,10 @@
 /*
  * Copyright (c) 2009 Nicholas C. Zakas
- * Copyright (c) 2014 Todd M. Horst
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * to use, copy, modify, merge, publish, distribute, sub-license, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
@@ -24,20 +23,20 @@
 (function ($) {
 
     $.idleTimer = function (firstParam, opts, elem) {
-   
-      
+        if (typeof firstParam === 'object') {
+            opts = $.extend({}, firstParam);
+            firstParam = null;
+        }
+
+        // element to watch
         elem = elem || document;
 
         // defaults that are to be stored as instance props on the elem
         opts = $.extend({
-            idle: false,            //indicates if the user is idle
-            enabled: true,          //indicates if the idle timer is enabled
-            timeout: 30000,         //the amount of time (ms) before the user is considered idle
-            events: "mousemove keydown wheel DOMMouseScroll mousewheel mousedown touchstart touchmove MSPointerDown MSPointerMove" // activity is one of these events
+            idle: false,                // indicates if the user is idle
+            timeout: 30000,             // the amount of time (ms) before the user is considered idle
+            events: "mousemove keydown wheel DOMMouseScroll mousewheel mousedown touchstart touchmove MSPointerDown MSPointerMove" // define active events
         }, opts);
-
-       
-
 
         var jqElem = $(elem),
             obj = jqElem.data("idleTimerObj") || {},
@@ -46,37 +45,21 @@
              * Toggles the idle state and fires an appropriate event.
              * @return {void}
              */
-            toggleIdleState = function (myelem) {
-
-                // curse you, mozilla setTimeout lateness bug!
-                if (typeof myelem === "number") {
-                    myelem = undefined;
-                }
-
-                var obj = $.data(myelem || elem, "idleTimerObj");
-
-                //toggle the state
+            toggleIdleState = function (e) {
+          
+                var obj = $.data(elem, "idleTimerObj") || {};
+          
+                // toggle the state
                 obj.idle = !obj.idle;
 
-                // reset timeout
-                var elapsed = (+new Date()) - obj.olddate;
+                // store toggle state date time
                 obj.olddate = +new Date();
 
-                // handle Chrome always triggering idle after js alert or comfirm popup,
-                // not happening in Version 33.0.1750.117 m desktop win7               
-                if (obj.idle && (elapsed < obj.timeout)) {
-                    obj.idle = false;
-                    clearTimeout(obj.tId);
-                    if (obj.enabled) {
-                        obj.tId = setTimeout(toggleIdleState, obj.timeout);
-                    }
-                    return;
-                }
-
-                // create a custom event, but first, store the new state on the element
-                // and then append that string to a namespace
-                var event = $.Event($.data(elem, "idleTimer", obj.idle ? "idle" : "active") + ".idleTimer");
-                $(elem).trigger(event, [elem, jQuery.extend({},obj)]);
+                // create a custom event, with state and name space
+                var event = $.Event((obj.idle ? "idle" : "active") + ".idleTimer");
+             
+                // trigger event on object with elem and copy of obj
+                $(elem).trigger(event, [elem, $.extend({}, obj), e]);
             },
             /**
              * Handle event triggers
@@ -84,22 +67,25 @@
              * @method event
              * @static
              */
-            handleEvent = function (jqElem, e) {
+            handleEvent = function (e) {
 
-                var obj = jqElem.data("idleTimerObj") || {};
+                var obj = $.data(elem, "idleTimerObj") || {};
+
+                // this is already paused, ignore events for now
+                if (obj.remaining != null) { return; }
 
                 /*
                 mousemove is kinda buggy, it can be triggered when it should be idle.
                 Typically is happening between 115 - 150 milliseconds after idle triggered.
-                @psyafter & @kaellis report "always triggered if using modal (jquery ui, with overlay)"
+                @psyafter & @kaellis report "always triggered if using modal (jQuery ui, with overlay)"
                 @thorst has similar issues on ios7 "after $.scrollTop() on text area"
                 */
                 if (e.type === "mousemove") {
-                    //If coord are same, it didnt move
+                    // if coord are same, it didn't move
                     if (e.pageX === obj.pageX && e.pageY === obj.pageY) {
                         return;
                     }
-                    //If coord dont exist how could it move
+                    // if coord don't exist how could it move
                     if (typeof e.pageX === "undefined" && typeof e.pageY === "undefined") {
                         return;
                     }
@@ -110,25 +96,24 @@
                     }
                 }
 
-                //clear any existing timeout
+                // clear any existing timeout
                 clearTimeout(obj.tId);
 
-                //if the idle timer is enabled
-                if (obj.enabled) {
-                    if (obj.idle) {
-                        toggleIdleState(elem);
-                    }
-
-                    //store when user was last active
-                    obj.lastActive = +new Date();
-
-                    //Update mouse coord
-                    obj.pageX = e.pageX;
-                    obj.pageY = e.pageY;
-
-                    //set a new timeout
-                    obj.tId = setTimeout(function () { toggleIdleState(elem); }, obj.timeout);
+                // if the idle timer is enabled, flip
+                if (obj.idle) {
+                    toggleIdleState(e);
                 }
+
+                // store when user was last active
+                obj.lastActive = +new Date();
+
+                // update mouse coord
+                obj.pageX = e.pageX;
+                obj.pageY = e.pageY;
+
+                // set a new timeout
+                obj.tId = setTimeout(toggleIdleState, obj.timeout);
+                
             },
             /**
              * Restore initial settings and restart timer
@@ -136,48 +121,42 @@
              * @method reset
              * @static
              */
-            reset = function (jqElem) {
+            reset = function () {
 
-                var obj = jqElem.data("idleTimerObj") || {};
+                var obj = $.data(elem, "idleTimerObj") || {};
 
-                //Reset settings
+                // reset settings
                 obj.idle = obj.idleBackup;
-                obj.enabled = obj.enabledBackup;
-
                 obj.olddate = +new Date();
+                obj.lastActive = obj.olddate;
+                obj.remaining = null;
 
-                //Reset Timers
+                // reset Timers
                 clearTimeout(obj.tId);
                 if (!obj.idle) {
-                    obj.tId = setTimeout(function () {toggleIdleState(elem); }, obj.timeout);
+                    obj.tId = setTimeout(toggleIdleState, obj.timeout);
                 }                
 
             },
             /**
              * Store remaining time, stop timer
+             * You can pause from an idle OR active state
              * @return {void}
              * @method pause
              * @static
              */
-            pause = function (jqElem) {
+            pause = function () {
+             
+                var obj = $.data(elem, "idleTimerObj") || {};
+       
+                // this is already paused
+                if ( obj.remaining != null ) { return; }
 
-                var obj = jqElem.data("idleTimerObj") || {};
-              
-                //This is already paused
-                if (obj.remaining != null) { return; }
-
-                //Define how much is left on the timer
+                // define how much is left on the timer
                 obj.remaining = obj.timeout - ((+new Date()) - obj.olddate);
-            
-                //If its already idle, or there isnt any time left
-                if (obj.idle || obj.remaining <= 0) {
-                    obj.remaining = null;
-                    return;
-                }
     
-                //clear any existing timeout
+                // clear any existing timeout
                 clearTimeout(obj.tId);
-
             },
             /**
              * Start timer with remaining value
@@ -185,121 +164,141 @@
              * @method resume
              * @static
              */
-            resume = function (jqElem) {
+            resume = function () {
 
-                var obj = jqElem.data("idleTimerObj") || {};
-                if (obj.remaining == null) { return; }
+                var obj = $.data(elem, "idleTimerObj") || {};
 
-                //start timer
-                obj.tId = setTimeout(toggleIdleState, obj.remaining);
+                // this isn't paused yet
+                if ( obj.remaining == null ) { return; }
 
+                // start timer
+                if ( !obj.idle ) {
+                    obj.tId = setTimeout(toggleIdleState, obj.remaining);
+                }
+                
+                // clear remaining
                 obj.remaining = null;
             },
             /**
              * Stops the idle timer. This removes appropriate event handlers
              * and cancels any pending timeouts.
              * @return {void}
-             * @method stop
+             * @method destroy
              * @static
              */
-            stop = function (jqElem) {
+            destroy = function () {
 
-                var obj = jqElem.data("idleTimerObj") || {};
-
-                //set to disabled
-                obj.enabled = false;
+                var obj = $.data(elem, "idleTimerObj") || {};
 
                 //clear any pending timeouts
                 clearTimeout(obj.tId);
 
+                //Remove data
+                jqElem.removeData("idleTimerObj");
+
                 //detach the event handlers
-                jqElem.off(".idleTimer");
+                jqElem.off("._idleTimer");
+            }
+            /**
+            * Returns the time until becoming idle
+            * @return {number}
+            * @method remainingtime
+            * @static
+            */
+            remainingtime = function () {
+
+                var obj = $.data(elem, "idleTimerObj") || {};
+
+                //If idle there is no time remaining
+                if ( obj.idle ) { return 0; }
+
+                //If its paused just return that
+                if ( obj.remaining != null ) { return obj.remaining; }
+
+                //Determine remaining, if negative idle didn't finish flipping, just return 0
+                var remaining = obj.timeout - ((+new Date()) - obj.lastActive);
+                if (remaining < 0) { remaining = 0; }
+
+                //If this is paused return that number, else return current remaining
+                return remaining;
             };
 
         
         
-        //Determine which function to call
+        // Determine which function to call
         if (typeof firstParam === "number") {
             opts.timeout = firstParam;
         } else if (firstParam === "destroy") {
-            stop(jqElem);
-            return;
+            destroy();
+            return null;
         } else if (firstParam === "pause") {
-            pause(jqElem);
-            console.log(obj.remaining);
-            return;
+            pause();
+            return null;
         } else if (firstParam === "resume") {
-            resume(jqElem);
-            return;
+            resume();
+            return null;
         } else if (firstParam === "reset") {
-            reset(jqElem);
-            return;
+            reset();
+            return null;
         } else if (firstParam === "getRemainingTime") {
-            //If idle there is no time remaining
-            if (obj.idle) { return 0; }
-
-            //Determing remaining, if negative idle didnt finish flipping, just return 0
-            var remaining = obj.timeout - ((+new Date()) - obj.lastActive);
-            if (remaining < 0) { remaining = 0; }
-
-            //If this is paused return that number, else return current remaining
-            return obj.remaining || remaining;
+            return remainingtime();
         } else if (firstParam === "getElapsedTime") {
             return (+new Date()) - obj.olddate;
         } else if (firstParam === "getLastActiveTime") {
             return obj.lastActive;
-        //} else if (firstParam === "getState") {
-        //    return obj.idle ? "idle" : "active";
         } else if (firstParam === "isIdle") {
             return obj.idle;
         }
-
+  
+        // if the obj has values don't reinit
+        if ( typeof obj.idle !== "undefined") { return; }
 
         /* (intentionally not documented)
-         * Handles a user event indicating that the user isn't idle.
+         * Handles a user event indicating that the user isn't idle. namespaced with internal idleTimer
          * @param {Event} event A DOM2-normalized event object.
          * @return {void}
          */
-        jqElem.on($.trim((opts.events + " ").split(" ").join(".idleTimer ")), function (e) {
-            //console.log(e.type);//get the event that was triggered
-            handleEvent($(this), e);
+        jqElem.on($.trim((opts.events + " ").split(" ").join("._idleTimer ")), function (e) {
+            handleEvent(e);
         });
 
         
-        //Internal Object Properties
-        obj.olddate = +new Date();          //the last time state changed
-        obj.lastActive = obj.olddate;       //the last time timer was active
-        obj.idle = opts.idle;               //current state
-        obj.idleBackup = opts.idle;         //backup of idle parameter since it gets modified
-        obj.enabled = opts.enabled;         //if this is currently enabled
-        obj.enabledBackup = opts.enabled;   //backup of enabled parameter since it gets modified
-        obj.timeout = opts.timeout;         //the interval to change state
-        obj.remaining = null;               //how long until state changes
-        obj.tId = null;                     //the idle timer setTimeout
+        // Internal Object Properties, This isn't all necessary, but we
+        // explicitly define all keys here so we know what we are working with
+        obj = $.extend({}, {
+            olddate : +new Date(),          // the last time state changed
+            lastActive : obj.olddate,       // the last time timer was active
+            idle : opts.idle,               // current state
+            idleBackup : opts.idle,         // backup of idle parameter since it gets modified
+            timeout : opts.timeout,         // the interval to change state
+            remaining : null,               // how long until state changes
+            tId : null,                     // the idle timer setTimeout
+            pageX : null,                   // used to store the mouse coord
+            pageY : null
+        });
 
-        //set a timeout to toggle state. May wish to omit this in some situations
+        // set a timeout to toggle state. May wish to omit this in some situations
         if (!obj.idle) {
-            obj.tId = setTimeout(function () { $(elem).data("idleTimerObj").idle = false; toggleIdleState(elem); }, obj.timeout);
+            obj.tId = setTimeout(toggleIdleState, obj.timeout);
         }
 
-        // assume the user is active for the first x seconds.
-        jqElem.data("idleTimer", obj.idle ? "idle" : "active");
-
         // store our instance on the object
-        jqElem.data("idleTimerObj", obj);
-        
+        $.data(elem, "idleTimerObj", obj);
     };
 
-    //This allows binding to element
+    // This allows binding to element
     $.fn.idleTimer = function (firstParam, opts) {
         // Allow omission of opts for backward compatibility
         if (!opts) {
             opts = {};
         }
+        if (typeof firstParam === 'object') {
+            opts = $.extend({}, firstParam);
+        }
 
         if (this[0]) {
             var result = $.idleTimer(firstParam, opts, this[0]);
-            if (result === false) {
+            if (result === null) {
                 return this;
             } else {
                 return result;
