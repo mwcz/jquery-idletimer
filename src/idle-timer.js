@@ -209,17 +209,42 @@ $.idleTimer = function( firstParam, elem ) {
 		 */
 		destroy = function (jqElem) {
 
-			var obj = jqElem.data("idleTimerObj") || {};
+		    var obj = $.data(elem, "idleTimerObj") || {};
 
-			//set to disabled
-			obj.enabled = false;
+		    //clear any pending timeouts
+		    clearTimeout(obj.tId);
 
-			//clear any pending timeouts
-			clearTimeout( obj.tId );
+		    //Remove data
+		    jqElem.removeData("idleTimerObj");
 
-			//detach the event handlers
-			jqElem.off(".idleTimer");
-		};
+		    //detach the event handlers
+		    jqElem.off("._idleTimer");
+		}
+
+        /**
+        * Returns the time until becoming idle
+        * @return {number}
+        * @method remainingtime
+        * @static
+        */
+	    remainingtime = function () {
+
+	        var obj = $.data(elem, "idleTimerObj") || {};
+
+	        //If idle there is no time remaining
+	        if (obj.idle) { return 0; }
+
+	        //If its paused just return that
+	        if (obj.remaining != null) { return obj.remaining; }
+
+	        //Determine remaining, if negative idle didn't finish flipping, just return 0
+	        var remaining = obj.timeout - ((+new Date()) - obj.lastActive);
+	        if (remaining < 0) { remaining = 0; }
+
+	        //If this is paused return that number, else return current remaining
+	        return remaining;
+	    };
+    
 
 	obj.olddate = obj.olddate || +new Date();
 
@@ -246,8 +271,14 @@ $.idleTimer = function( firstParam, elem ) {
 	} else if (firstParam === "reset") {
 	    reset();
 	    return jqElem;
+	} else if (firstParam === "getRemainingTime") {
+	    return remainingtime();
 	} else if ( firstParam === "getElapsedTime" ) {
-		return ( +new Date() ) - obj.olddate;
+	    return (+new Date()) - obj.olddate;
+	} else if (firstParam === "getLastActiveTime") {
+	    return obj.lastActive;
+	} else if (firstParam === "isIdle") {
+	    return obj.idle;
 	}
 
 
