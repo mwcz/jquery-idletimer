@@ -133,6 +133,73 @@ $.idleTimer = function( firstParam, elem ) {
 
         },
 
+        /**
+        * Restore initial settings and restart timer
+        * @return {void}
+        * @method reset
+        * @static
+        */
+        reset = function () {
+
+            var obj = $.data(elem, "idleTimerObj") || {};
+
+            // reset settings
+            obj.idle = obj.idleBackup;
+            obj.olddate = +new Date();
+            obj.lastActive = obj.olddate;
+            obj.remaining = null;
+
+            // reset Timers
+            clearTimeout(obj.tId);
+            if (!obj.idle) {
+                obj.tId = setTimeout(toggleIdleState, obj.timeout);
+            }
+
+        },
+
+        /**
+        * Store remaining time, stop timer
+        * You can pause from an idle OR active state
+        * @return {void}
+        * @method pause
+        * @static
+        */
+        pause = function () {
+
+            var obj = $.data(elem, "idleTimerObj") || {};
+
+            // this is already paused
+            if (obj.remaining != null) { return; }
+
+            // define how much is left on the timer
+            obj.remaining = obj.timeout - ((+new Date()) - obj.olddate);
+
+            // clear any existing timeout
+            clearTimeout(obj.tId);
+        },
+
+        /**
+        * Start timer with remaining value
+        * @return {void}
+        * @method resume
+        * @static
+        */
+        resume = function () {
+
+            var obj = $.data(elem, "idleTimerObj") || {};
+
+            // this isn't paused yet
+            if (obj.remaining == null) { return; }
+
+            // start timer
+            if (!obj.idle) {
+                obj.tId = setTimeout(toggleIdleState, obj.remaining);
+            }
+
+            // clear remaining
+            obj.remaining = null;
+        },
+
 		/**
 		 * Stops the idle timer. This removes appropriate event handlers
 		 * and cancels any pending timeouts.
@@ -170,6 +237,15 @@ $.idleTimer = function( firstParam, elem ) {
 	} else if ( firstParam === "destroy" ) {
 		stop( jqElem );
 		return this;
+	} else if (firstParam === "pause") {
+	    pause();
+	    return jqElem;
+	} else if (firstParam === "resume") {
+	    resume();
+	    return jqElem;
+	} else if (firstParam === "reset") {
+	    reset();
+	    return jqElem;
 	} else if ( firstParam === "getElapsedTime" ) {
 		return ( +new Date() ) - obj.olddate;
 	}
