@@ -78,6 +78,61 @@ $.idleTimer = function( firstParam, elem ) {
 		    $(elem).trigger(event, [elem, $.extend({}, obj), e]);
 		},
 
+        /**
+        * Handle event triggers
+        * @return {void}
+        * @method event
+        * @static
+        */
+        handleEvent = function (e) {
+
+            var obj = $.data(elem, "idleTimerObj") || {};
+
+            // this is already paused, ignore events for now
+            if (obj.remaining != null) { return; }
+
+            /*
+            mousemove is kinda buggy, it can be triggered when it should be idle.
+            Typically is happening between 115 - 150 milliseconds after idle triggered.
+            @psyafter & @kaellis report "always triggered if using modal (jQuery ui, with overlay)"
+            @thorst has similar issues on ios7 "after $.scrollTop() on text area"
+            */
+            if (e.type === "mousemove") {
+                // if coord are same, it didn't move
+                if (e.pageX === obj.pageX && e.pageY === obj.pageY) {
+                    return;
+                }
+                // if coord don't exist how could it move
+                if (typeof e.pageX === "undefined" && typeof e.pageY === "undefined") {
+                    return;
+                }
+                // under 200 ms is hard to do, and you would have to stop, as continuous activity will bypass this
+                var elapsed = (+new Date()) - obj.olddate;
+                if (elapsed < 200) {
+                    return;
+                }
+            }
+
+            // clear any existing timeout
+            clearTimeout(obj.tId);
+
+            // if the idle timer is enabled, flip
+            if (obj.idle) {
+                toggleIdleState(e);
+            }
+
+            // store when user was last active
+            obj.lastActive = +new Date();
+
+            // update mouse coord
+            obj.pageX = e.pageX;
+            obj.pageY = e.pageY;
+
+            // set a new timeout
+            obj.tId = setTimeout(toggleIdleState, obj.timeout);
+
+        },
+
 		/**
 		 * Stops the idle timer. This removes appropriate event handlers
 		 * and cancels any pending timeouts.
@@ -125,22 +180,8 @@ $.idleTimer = function( firstParam, elem ) {
 	 * @param {Event} event A DOM2-normalized event object.
 	 * @return {void}
 	 */
-	jqElem.on( $.trim( ( opts.events + " " ).split(" ").join(".idleTimer ") ), function() {
-		var obj = $.data( this, "idleTimerObj" );
-
-		//clear any existing timeout
-		clearTimeout( obj.tId );
-
-		//if the idle timer is enabled
-		if ( obj.enabled ){
-			//if it's idle, that means the user is no longer idle
-			if ( obj.idle ){
-				toggleIdleState( this );
-			}
-
-			//set a new timeout
-			obj.tId = setTimeout( toggleIdleState, obj.timeout );
-		}
+	jqElem.on( $.trim( ( opts.events + " " ).split(" ").join("._idleTimer ") ), function(e) {
+	    handleEvent(e);
 	});
 
 	obj.idle = opts.idle;
