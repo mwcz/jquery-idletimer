@@ -61,7 +61,7 @@ $.idleTimer = function( firstParam, elem ) {
 		 * Toggles the idle state and fires an appropriate event.
 		 * @return {void}
 		 */
-		toggleIdleState = function( myelem ) {
+		toggleIdleState = function( e ) {
 
 		    var obj = $.data(elem, "idleTimerObj") || {};
 
