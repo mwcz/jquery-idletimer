@@ -63,34 +63,19 @@ $.idleTimer = function( firstParam, elem ) {
 		 */
 		toggleIdleState = function( myelem ) {
 
-			// curse you, mozilla setTimeout lateness bug!
-			if ( typeof myelem === "number" ) {
-				myelem = undefined;
-			}
+		    var obj = $.data(elem, "idleTimerObj") || {};
 
-			var obj = $.data( myelem || elem, "idleTimerObj" );
+		    // toggle the state
+		    obj.idle = !obj.idle;
 
-			//toggle the state
-			obj.idle = !obj.idle;
+		    // store toggle state date time
+		    obj.olddate = +new Date();
 
-			// reset timeout
-			var elapsed = ( +new Date() ) - obj.olddate;
-			obj.olddate = +new Date();
+		    // create a custom event, with state and name space
+		    var event = $.Event((obj.idle ? "idle" : "active") + ".idleTimer");
 
-			// handle Chrome always triggering idle after js alert or comfirm popup
-			if ( obj.idle && ( elapsed < opts.timeout ) ) {
-				obj.idle = false;
-				clearTimeout( $.idleTimer.tId );
-				if ( opts.enabled ) {
-					$.idleTimer.tId = setTimeout( toggleIdleState, opts.timeout );
-				}
-				return;
-			}
-
-			// create a custom event, but first, store the new state on the element
-			// and then append that string to a namespace
-			var event = $.Event( $.data( elem, "idleTimer", obj.idle ? "idle" : "active" ) + ".idleTimer" );
-			$( elem ).trigger( event );
+		    // trigger event on object with elem and copy of obj
+		    $(elem).trigger(event, [elem, $.extend({}, obj), e]);
 		},
 
 		/**
