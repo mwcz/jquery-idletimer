@@ -19,16 +19,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
+/*
+	mousewheel (deprecated) -> IE6.0, Chrome, Opera, Safari
+	DOMMouseScroll (deprecated) -> Firefox 1.0
+	wheel (standard) -> Chrome 31, Firefox 17, IE9, Firefox Mobile 17.0
+	
+	//No need to use, use DOMMouseScroll
+	MozMousePixelScroll -> Firefox 3.5, Firefox Mobile 1.0
+	
+	//Events
+	WheelEvent -> see wheel
+	MouseWheelEvent -> see mousewheel
+	MouseScrollEvent -> Firefox 3.5, Firefox Mobile 1.0
+*/
 ( function( $ ) {
 
-$.idleTimer = function( firstParam, elem, opts ) {
+$.idleTimer = function( firstParam, elem ) {
+    var opts;
+    if (typeof firstParam === "object") {
+        opts = firstParam;
+        firstParam = null;
+    } else if (typeof firstParam === "number") {
+        opts = { timeout: firstParam };
+        firstParam = null;
+    }
 
 	// defaults that are to be stored as instance props on the elem
 	opts = $.extend( {
-		startImmediately: true,   //starts a timeout as soon as the timer is set up
 		idle: false,              //indicates if the user is idle
-		enabled: true,            //indicates if the idle timer is enabled
 		timeout: 30000,           //the amount of time (ms) before the user is considered idle
 		events: "mousemove keydown DOMMouseScroll mousewheel mousedown touchstart touchmove" // activity is one of these events
 	}, opts );
@@ -98,8 +116,17 @@ $.idleTimer = function( firstParam, elem, opts ) {
 
 	obj.olddate = obj.olddate || +new Date();
 
-	if ( typeof firstParam === "number" ) {
-		opts.timeout = firstParam;
+    // determine which function to call
+	if (firstParam === null && typeof obj.idle !== "undefined") {
+	    // they think they want to init, but it already is, just reset
+	    reset();
+	    return jqElem;
+	} else if (firstParam === null) {
+	    // they want to init
+	} else if (firstParam !== null && typeof obj.idle === "undefined") {
+	    // they want to do something, but it isnt init
+	    // not sure the best way to handle this
+	    return false;
 	} else if ( firstParam === "destroy" ) {
 		stop( jqElem );
 		return this;
@@ -144,17 +171,15 @@ $.idleTimer = function( firstParam, elem, opts ) {
 	jqElem.data( "idleTimer", "active" );
 
 	// store our instance on the object
-	jqElem.data( "idleTimerObj", obj );
+	jqElem.data("idleTimerObj", obj);
+
+	return jqElem;
 };
 
-$.fn.idleTimer = function( firstParam, opts ) {
-	// Allow omission of opts for backward compatibility
-	if ( !opts ) {
-		opts = {};
-	}
+$.fn.idleTimer = function( firstParam ) {
 
 	if ( this[0] ){
-		return $.idleTimer( firstParam, this[0], opts );
+		return $.idleTimer( firstParam, this[0] );
 	}
 
 	return this;
