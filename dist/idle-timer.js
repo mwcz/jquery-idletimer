@@ -1,4 +1,4 @@
-/*! Idle Timer - v1.0.0.pre - 2014-03-10
+/*! Idle Timer - v1.0.0 - 2014-03-10
 * https://github.com/thorst/jquery-idletimer
 * Copyright (c) 2014 Paul Irish; Licensed MIT */
 /*

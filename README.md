@@ -1,4 +1,4 @@
-jQuery Idle Timer Plugin [![Build Status](https://travis-ci.org/thorst/jquery-idletimer.png?branch=dev)](https://travis-ci.org/thorst/jquery-idletimer)
+jQuery Idle Timer Plugin [![Build Status](https://travis-ci.org/thorst/jquery-idletimer.png?branch=master)](https://travis-ci.org/thorst/jquery-idletimer)
 ========================
 
 
@@ -8,8 +8,8 @@ http://thorst.github.io/jquery-idletimer/
 
 Download
 --------
-* [Compressed 2.49kb](https://raw.github.com/thorst/jquery-idletimer/master/dist/idle-timer.min.js)
-* [Uncompressed 10.3kb](https://raw.github.com/thorst/jquery-idletimer/master/dist/idle-timer.js)
+* [Compressed ~3kb](https://raw.github.com/thorst/jquery-idletimer/master/dist/idle-timer.min.js)
+* [Uncompressed ~11kb](https://raw.github.com/thorst/jquery-idletimer/master/dist/idle-timer.js)
 
 Purpose
 -------
@@ -181,7 +181,7 @@ Version History
 -------
 | Version                                 | Author          | Released   | Links                         |
 | --------------------------------------- |-----------------| ---------- | ----------------------------- |
-| [1.0.0](https://raw.github.com/thorst/jquery-idletimer/master/dist/idle-timer.1.0.0.min.js)   | Todd Horst      | 03/10/2014 | [Change Log](changelog.md) - [Breaking Changes](changelog.md#breaking-changes) |
+| [1.0.0](https://raw.github.com/thorst/jquery-idletimer/master/dist/idle-timer.1.0.0.min.js)   | Todd Horst      | 03/10/2014 | [Change Log](CHANGELOG.md) - [Breaking Changes](CHANGELOG.md#breaking-changes) |
 | [0.9.3](https://raw.github.com/thorst/jquery-idletimer/master/dist/idle-timer.0.9.3.min.js)   | Mike Sherov     | 08/04/2013 | 
 
 
