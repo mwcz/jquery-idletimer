@@ -305,16 +305,13 @@ $.idleTimer = function( firstParam, elem ) {
 	    pageY: null
 	});
 
-	//set a timeout to toggle state. May wish to omit this in some situations
-	if ( opts.startImmediately ) {
-		obj.tId = setTimeout( toggleIdleState, obj.timeout );
+    // set a timeout to toggle state. May wish to omit this in some situations
+	if (!obj.idle) {
+	    obj.tId = setTimeout(toggleIdleState, obj.timeout);
 	}
 
-	// assume the user is active for the first x seconds.
-	jqElem.data( "idleTimer", "active" );
-
-	// store our instance on the object
-	jqElem.data("idleTimerObj", obj);
+    // store our instance on the object
+	$.data(elem, "idleTimerObj", obj);
 
 	return jqElem;
 };
