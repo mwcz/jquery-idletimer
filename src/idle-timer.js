@@ -291,9 +291,19 @@ $.idleTimer = function( firstParam, elem ) {
 	    handleEvent(e);
 	});
 
-	obj.idle = opts.idle;
-	obj.enabled = opts.enabled;
-	obj.timeout = opts.timeout;
+    // Internal Object Properties, This isn't all necessary, but we
+    // explicitly define all keys here so we know what we are working with
+	obj = $.extend({}, {
+	    olddate: +new Date(),          // the last time state changed
+	    lastActive: +new Date(),       // the last time timer was active
+	    idle: opts.idle,               // current state
+	    idleBackup: opts.idle,         // backup of idle parameter since it gets modified
+	    timeout: opts.timeout,         // the interval to change state
+	    remaining: null,               // how long until state changes
+	    tId: null,                     // the idle timer setTimeout
+	    pageX: null,                   // used to store the mouse coord
+	    pageY: null
+	});
 
 	//set a timeout to toggle state. May wish to omit this in some situations
 	if ( opts.startImmediately ) {
