@@ -207,7 +207,7 @@ $.idleTimer = function( firstParam, elem ) {
 		 * @method stop
 		 * @static
 		 */
-		stop = function( jqElem ) {
+		destroy = function (jqElem) {
 
 			var obj = jqElem.data("idleTimerObj") || {};
 
@@ -235,7 +235,7 @@ $.idleTimer = function( firstParam, elem ) {
 	    // not sure the best way to handle this
 	    return false;
 	} else if ( firstParam === "destroy" ) {
-		stop( jqElem );
+	    destroy(jqElem);
 		return this;
 	} else if (firstParam === "pause") {
 	    pause();
