@@ -1,6 +1,6 @@
-/*! Idle Timer - v1.0.0.pre - 2014-03-10
-* https://github.com/thorst/jquery-idletimer
-* Copyright (c) 2014 Paul Irish; Licensed MIT */
+/*! Idle Timer - v0.9.2 - 2013-08-04
+* https://github.com/mikesherov/jquery-idletimer
+* Copyright (c) 2013 Paul Irish; Licensed MIT */
 ( function( $ ) {
 
 $.idleTimer = function( firstParam, elem, opts ) {

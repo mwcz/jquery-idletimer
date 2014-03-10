@@ -11,6 +11,9 @@ module.exports = function(grunt) {
       "<%= pkg.homepage ? '* ' + pkg.homepage + '\\n' : '' %>" +
       "* Copyright (c) <%= grunt.template.today('yyyy') %> <%= pkg.author.name %>;" +
       " Licensed <%= _.pluck(pkg.licenses, 'type').join(', ') %> */\n",
+    minbanner: "/*! <%= pkg.title || pkg.name %> v<%= pkg.version %> <%= grunt.template.today('yyyy-mm-dd') %> | " +
+      "<%= pkg.homepage ? pkg.homepage : '' %> | (c) <%= grunt.template.today('yyyy') %> <%= pkg.author.name %> | " + 
+      "Licensed <%= _.pluck(pkg.licenses, 'type').join(', ') %> */\n",
     // Task configuration.
     concat: {
       options: {
@@ -18,8 +21,16 @@ module.exports = function(grunt) {
         stripBanners: true
       },
       dist: {
-        src: ["src/<%= pkg.name %>.js"],
-        dest: "dist/<%= pkg.name %>.js"
+          files: [
+                {
+                    src: ["src/<%= pkg.name %>.js"],
+                    dest: "dist/<%= pkg.name %>.js"
+                },
+                {
+                    src: ["src/<%= pkg.name %>.js"],
+                    dest: "dist/<%= pkg.name %>.<%= pkg.version %>.js"
+                }
+          ]
       },
     },
     uglify: {
@@ -27,8 +38,16 @@ module.exports = function(grunt) {
         banner: "<%= banner %>"
       },
       dist: {
-        src: "<%= concat.dist.dest %>",
-        dest: "dist/<%= pkg.name %>.min.js"
+          files: [
+                {
+                    src: "<%= concat.dist.files[0].dest %>",
+                    dest: "dist/<%= pkg.name %>.min.js"
+                },
+                {
+                    src: "<%= concat.dist.files[0].dest %>",
+                    dest: "dist/<%= pkg.name %>.<%= pkg.version %>.min.js"
+                }
+          ]
       },
     },
     qunit: {
