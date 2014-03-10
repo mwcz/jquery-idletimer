@@ -143,7 +143,7 @@
                     diff = (+new Date()) - obj.lastActive - obj.timeout,
                     warning = (+new Date()) - diff
                 ;
-                alert(diff);
+                
                 //On mobile js is paused, so see if this was triggered while we were sleeping
                 if (diff >= session.warningTimeout || warning <= session.minWarning) {
                     $("#mdlLoggedOut").modal("show");
