@@ -4,7 +4,7 @@ jQuery Idle Timer Plugin [![Build Status](https://travis-ci.org/thorst/jquery-id
 
 Demo
 --------
-http://thorst.github.io/jquery-idletimer/
+http://thorst.github.io/jquery-idletimer/index.html
 
 Download
 --------
@@ -169,7 +169,7 @@ Links
 * [jQuery plugin repo listing](http://plugins.jquery.com/idle-timer/)
 * [cdn](coming soon)
 * [nuget](coming soon)
-* [Eric Hynds’ Idle Timeout plugin](https://github.com/ehynds/jquery-idle-timeout) 
+* [Eric Hyndsï¿½ Idle Timeout plugin](https://github.com/ehynds/jquery-idle-timeout) 
 (note we have similar functionality [here](http://thorst.github.io/jquery-idletimer/autologout.html))
 
 Playground
