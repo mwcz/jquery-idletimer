@@ -3,6 +3,7 @@ jQuery Idle Timer Plugin
 [![Build Status](https://travis-ci.org/thorst/jquery-idletimer.png?branch=master)](https://travis-ci.org/thorst/jquery-idletimer) 
 [![Dependency Status](https://david-dm.org/thorst/jquery-idletimer.png?theme=shields.io)](https://david-dm.org/thorst/jquery-idletimer)
 [![devDependency Status](https://david-dm.org/thorst/jquery-idletimer/dev-status.png?theme=shields.io)](https://david-dm.org/thorst/jquery-idletimer#info=devDependencies)
+[![Coverage Status](https://coveralls.io/repos/thorst/jquery-idletimer/badge.png)](https://coveralls.io/r/thorst/jquery-idletimer)
 
 Demo
 --------
