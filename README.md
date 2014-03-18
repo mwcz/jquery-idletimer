@@ -1,4 +1,4 @@
-jQuery Idle Timer Plugin [![Build Status](https://travis-ci.org/thorst/jquery-idletimer.png?branch=master)](https://travis-ci.org/thorst/jquery-idletimer)
+jQuery Idle Timer Plugin [![Build Status](https://travis-ci.org/thorst/jquery-idletimer.png?branch=master)](https://travis-ci.org/thorst/jquery-idletimer) [![Dependency Status](https://david-dm.org/thorst/jquery-idletimer.png?theme=shields.io)](https://david-dm.org/thorst/jquery-idletimer)
 ========================
 
 
