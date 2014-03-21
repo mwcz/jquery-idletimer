@@ -51,8 +51,28 @@ module.exports = function(grunt) {
       },
     },
     qunit: {
-      files: ["test/**/*.html"]
+		options: {
+			timeout: 30000,
+			"--web-security": "no",
+			coverage: {
+				src: [ "src/<%= pkg.name %>.js" ],
+				instrumentedFiles: "temp/",
+				htmlReport: "build/report/coverage",
+				lcovReport: "build/report/lcov",
+				linesThresholdPct: 0
+			}
+		},
+		files: ["test/**/*.html"]
     },
+	coveralls: {
+		options: {
+			// dont fail if coveralls fails
+			force: true
+		},
+		main_target: {
+			src: "build/report/lcov/lcov.info"
+		}
+	},
     jshint: {
       gruntfile: {
         options: {
@@ -91,7 +111,8 @@ module.exports = function(grunt) {
 
   // These plugins provide necessary tasks.
   grunt.loadNpmTasks("grunt-contrib-jshint");
-  grunt.loadNpmTasks("grunt-contrib-qunit");
+  grunt.loadNpmTasks("grunt-coveralls");
+  grunt.loadNpmTasks("grunt-qunit-istanbul");
   grunt.loadNpmTasks("grunt-contrib-concat");
   grunt.loadNpmTasks("grunt-contrib-uglify");
   grunt.loadNpmTasks("grunt-contrib-watch");
