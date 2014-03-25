@@ -171,10 +171,10 @@ Intended Browser Support
 Links
 -------
 * [jQuery plugin repo listing](http://plugins.jquery.com/idle-timer/)
-* [cdn](coming soon)
-* [nuget](coming soon)
-* [Eric Hynds� Idle Timeout plugin](https://github.com/ehynds/jquery-idle-timeout) 
-(note we have similar functionality [here](http://thorst.github.io/jquery-idletimer/autologout.html))
+* [cdn](http://cdnjs.com/libraries/jquery-idletimer/)
+* [nuget]() - coming soon
+* [Eric Hynds Idle Timeout plugin](https://github.com/ehynds/jquery-idle-timeout) 
+(note we have similar functionality [here](http://thorst.github.io/jquery-idletimer/prod/demos/autologout.html))
 
 Playground
 -------
