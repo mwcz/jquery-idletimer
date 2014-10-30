@@ -178,7 +178,7 @@ Links
 
 Playground
 -------
-* [js fiddle](http://jsfiddle.net/thorst/2aGL4/4/)
+* [js fiddle](http://jsfiddle.net/thorst/2aGL4/)
 * [css deck](http://cssdeck.com/labs/sosoro3m)
 
 Version History
