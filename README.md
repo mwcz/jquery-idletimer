@@ -34,7 +34,7 @@ case you may set up your timers on `document`, `document.documentElement`, and `
 Instantiate returns jQuery for chaining.
 
 ```javascript
-
+$(function() {
     // binds to document - shorthand
     $.idleTimer();
 
@@ -43,13 +43,13 @@ Instantiate returns jQuery for chaining.
 
     // bind to different element
     $( "#myTextArea" ).idleTimer();
-
+});
 ```
 
 You can configure the settings several ways
 
 ```javascript
-
+$(function() {
     // idleTimer() with all defaults
     $( document ).idleTimer( );
 
@@ -76,14 +76,14 @@ You can configure the settings several ways
 
     // activity is any one of these events
     events [default:'mousemove keydown wheel DOMMouseScroll mousewheel mousedown touchstart touchmove MSPointerDown MSPointerMove']
-
+});
 ```
 
 When a users state changes a custom events get triggered. There are several parameters
 passed to your handler for you to use
 
 ```javascript
-
+$(function() {
     $( document ).on( "idle.idleTimer", function(event, elem, obj){
         // function you want to fire when the user goes idle
     });
@@ -108,13 +108,13 @@ passed to your handler for you to use
     // triggerevent
     // is the initial event that triggered the element to become active
     // obviously for idle state this will be undefined
-
+});
 ```
 
 There are several methods to invoke
 
 ```javascript
-
+$(function() {
     // stop the timer, removes data, removes event bindings
     // to come back from this you will need to instantiate again
     // returns: jQuery
@@ -148,7 +148,7 @@ There are several methods to invoke
     // you can also query if it's "idle" or "active"
     // returns: bool
     $( document ).idleTimer("isIdle");
-
+});
 ```
 
 Pre-Req
