@@ -1,5 +1,6 @@
 {
   "name": "jquery-idletimer",
+  "main": "dist/idle-timer.js",
   "version": "0.0.0-ignored",
   "engines": {
     "node": ">= 0.6.0"
@@ -21,6 +22,6 @@
     "grunt": "0.4.2"
   },
   "dependencies": {
-    
+
   }
 }
