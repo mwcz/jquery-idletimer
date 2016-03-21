@@ -81,8 +81,45 @@
 		}, 100);
 	});
 
-	
-	
+	module("Timer sync");
+	asyncTest("setting lastActive via localStorage", 1, function() {
+		localStorage.clear();
+		$.idleTimer( {timeout: 500, timerSyncId: "timer-test"} );
+		setTimeout( function() {
+			$( "#qunit-fixture" ).trigger( "keydown" );
+		}, 100 );
+		setTimeout( function() {
+			ok(localStorage.getItem("timer-test"), "localStorage key was set");
+			$.idleTimer("destroy");
+			$(document).off();
+			start();
+		}, 300 );
+	});
+	asyncTest( "storage triggers active", 2, function() {
+		localStorage.clear();
+		$( document ).on( "active.idleTimer", function(event, elem, obj){
+
+			ok(true, "active fires at document");
+			ok(!obj.idle, "object returned properly");
+
+			$.idleTimer("destroy");
+			$(document).off();
+
+			start();
+		});
+		$.idleTimer( {idle:true, timerSyncId: "timer-storage-event-test"} );
+		setTimeout( function() {
+			var e = $.Event("storage");
+			// simulate a storage event for this timer's sync ID
+			e.originalEvent = {
+				key: "timer-storage-event-test",
+				oldValue: "1",
+				newValue: "2"
+			};
+			$(window).trigger(e);
+		}, 100 );
+	});
+
 	/*
 	Need to actually test pause/resume/reset, not just thier return type
 	*/
@@ -166,7 +203,7 @@
 		$("#qunit-fixture").idleTimer(200);
 		$("#qunit-fixture").idleTimer("pause");
 
-        //After a bit, reset it 
+        //After a bit, reset it
 		setTimeout(function () {
 			equal(typeof $.idleTimer("reset").jquery, "string", "reset should be jquery");
 			equal(typeof $("#qunit-fixture").idleTimer("reset").jquery, "string", "reset should be jquery");
@@ -185,9 +222,9 @@
 
 			start();
 		}, 400);
-	
+
 	});
-	
+
 	test("Last Active time is a number", 2, function () {
 
 		$.idleTimer(100);
@@ -197,7 +234,7 @@
 
 		$.idleTimer("destroy");
 	});
-	
+
 	test("Remaining time is a number", 2, function () {
 
 		$.idleTimer(100);

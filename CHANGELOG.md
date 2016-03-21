@@ -1,4 +1,4 @@
-####VERSION:	1.0.0	
+####VERSION:	1.1.0
 ####RELEASED:	03/10/2014
 ####AUTHOR:		TODD HORST
 -------
@@ -26,6 +26,7 @@ Added:
 * `wheel` event. wheel is to replace DOMMouseScroll & mousewheel. We could remove DOMMouseScroll now as its technically not needed to support firefox n-1. mousewheel will stick around until we drop ie8.
 * `MSPointerDown` `MSPointerMove` events #22
 * ability to send only settings parameter
+* Ability to sync timer state across browser tabs
 
 Update:
 * changed $().data() to jQuery.data() for speed

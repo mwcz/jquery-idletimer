@@ -235,7 +235,10 @@
 
             //Start timeout, passing no options
             //Same as $.idleTimer(docTimeout, docOptions);
-            $(document).idleTimer(docTimeout);
+            $(document).idleTimer({
+              timeout: docTimeout,
+              timerSyncId: "document-timer-demo"
+            });
 
             //For demo purposes, style based on initial state
             if ($(document).idleTimer("isIdle")) {
@@ -327,7 +330,7 @@
                 }
                 $(this).blur();
                 return false;
-            }); 
+            });
             $("#btRemaining").click(function () {
                 $('#elStatus')
                     .val(function (i, v) {
@@ -345,7 +348,7 @@
                     .scrollToBottom();
                 $(this).blur();
                 return false;
-            }); 
+            });
             $("#btState").click(function () {
                 $('#elStatus')
                     .val(function (i, v) {
@@ -357,7 +360,10 @@
             });
 
             //Clear value if there was one cached & start time
-            $('#elStatus').val('').idleTimer(taTimeout);
+            $('#elStatus').val('').idleTimer({
+              timeout: taTimeout,
+              timerSyncId: "element-timer-demo"
+            });
 
             //For demo purposes, show initial state
             if ($("#elStatus").idleTimer("isIdle")) {
