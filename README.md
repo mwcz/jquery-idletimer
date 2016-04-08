@@ -76,6 +76,9 @@ $(function() {
 
     // activity is any one of these events
     events [default:'mousemove keydown wheel DOMMouseScroll mousewheel mousedown touchstart touchmove MSPointerDown MSPointerMove']
+
+    // If set, the use a localStorage key to sync activity across browser tabs/windows
+    timerSyncId [default:null]
 });
 ```
 
